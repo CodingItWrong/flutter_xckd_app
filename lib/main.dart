@@ -75,6 +75,18 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(title),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.looks_one),
+            tooltip: "Select Comics by Number",
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const SelectionPage(),
+              ),
+            ),
+          ),
+        ],
       ),
       body: ListView.builder(
         itemCount: latestComic,
@@ -158,6 +170,59 @@ class ComicPage extends StatelessWidget {
           child: Text(comic["alt"]),
         ),
       ]),
+    );
+  }
+}
+
+class SelectionPage extends StatelessWidget {
+  const SelectionPage({super.key});
+
+  Future<Map<String, dynamic>> _fetchComic(String n) async {
+    final dir = await getTemporaryDirectory();
+    var comicFile = File("${dir.path}.$n.json}");
+
+    if (await comicFile.exists() && comicFile.readAsStringSync() != "") {
+      return json.decode(comicFile.readAsStringSync());
+    } else {
+      final comic =
+          await http.read(Uri.parse("https://xkcd.com/$n/info.0.json"));
+      print(comic);
+      comicFile.writeAsString(comic);
+      return json.decode(comic);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Comic selection"),
+      ),
+      body: Center(
+        child: TextField(
+          decoration: const InputDecoration(
+            labelText: "Insert comic #",
+          ),
+          keyboardType: TextInputType.number,
+          autofocus: true,
+          onSubmitted: (a) => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => FutureBuilder(
+                future: _fetchComic(a),
+                builder: (context, snapshot) {
+                  print(snapshot.data);
+                  if (snapshot.hasData && snapshot.data != null) {
+                    return ComicPage(comic: snapshot.data!);
+                  } else {
+                    return const CircularProgressIndicator();
+                  }
+                },
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
