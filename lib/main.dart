@@ -48,7 +48,16 @@ class HomeScreen extends StatelessWidget {
           future: _fetchComic(i),
           builder: (context, comicResult) => comicResult.hasData
               ? ComicTile(comic: comicResult.data)
-              : const Divider(),
+              : const Center(
+                  child: SizedBox(
+                    width: 30,
+                    height: 30,
+                    child: Padding(
+                      padding: EdgeInsets.all(3.0),
+                      child: CircularProgressIndicator(),
+                    ),
+                  ),
+                ),
         ),
       ),
     );
