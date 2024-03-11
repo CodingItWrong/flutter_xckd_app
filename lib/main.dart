@@ -74,13 +74,38 @@ class ComicTile extends StatelessWidget {
       ),
       title: Text(presentComic["title"]),
       onTap: () {
-        // Navigator.push(
-        //   context,
-        //   MaterialPageRoute(
-        //     builder: (context) => ComicPage(comic),
-        //   ),
-        // );
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ComicPage(comic: presentComic),
+          ),
+        );
       },
+    );
+  }
+}
+
+class ComicPage extends StatelessWidget {
+  const ComicPage({super.key, required this.comic});
+  final Map<String, dynamic> comic;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text("#${comic["num"]}")),
+      body: ListView(children: [
+        Center(
+          child: Text(
+            comic["title"],
+            style: Theme.of(context).textTheme.displayLarge,
+          ),
+        ),
+        Image.network(comic["img"]),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(comic["alt"]),
+        ),
+      ]),
     );
   }
 }
