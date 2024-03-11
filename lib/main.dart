@@ -211,8 +211,9 @@ class SelectionPage extends StatelessWidget {
               builder: (context) => FutureBuilder(
                 future: _fetchComic(a),
                 builder: (context, snapshot) {
-                  print(snapshot.data);
-                  if (snapshot.hasData && snapshot.data != null) {
+                  if (snapshot.hasError) {
+                    return const ErrorPage();
+                  } else if (snapshot.hasData && snapshot.data != null) {
                     return ComicPage(comic: snapshot.data!);
                   } else {
                     return const CircularProgressIndicator();
@@ -223,6 +224,23 @@ class SelectionPage extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class ErrorPage extends StatelessWidget {
+  const ErrorPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Error"),
+      ),
+      body: const Column(children: [
+        Icon(Icons.not_interested),
+        Text("The comic you have selected doesn't exist or isn't available"),
+      ]),
     );
   }
 }
