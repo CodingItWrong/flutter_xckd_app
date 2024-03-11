@@ -1,6 +1,8 @@
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 import 'dart:convert';
+import 'dart:io';
 
 Future<int> getLatestComicNumber() async => json.decode(
       await http.read(
@@ -28,13 +30,25 @@ class HomeScreen extends StatelessWidget {
   final int latestComic;
   final String title;
 
-  Future<Map<String, dynamic>> _fetchComic(int n) async => json.decode(
-        await http.read(
-          Uri.parse(
-            "https://xkcd.com/${latestComic - n}/info.0.json",
-          ),
+  Future<Map<String, dynamic>> _fetchComic(int n) async {
+    final dir = await getTemporaryDirectory();
+    int comicNumber = latestComic - n;
+    var comicFile = File("${dir.path}/$comicNumber.json");
+
+    if (await comicFile.exists() && comicFile.readAsStringSync() != "") {
+      print("Loading $n from cache");
+      return json.decode(comicFile.readAsStringSync());
+    } else {
+      final comic = await http.read(
+        Uri.parse(
+          "https://xkcd.com/${latestComic - n}/info.0.json",
         ),
       );
+      print("Saving $n to cache");
+      comicFile.writeAsStringSync(comic);
+      return json.decode(comic);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
