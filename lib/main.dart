@@ -4,13 +4,34 @@ import 'package:path_provider/path_provider.dart';
 import 'dart:convert';
 import 'dart:io';
 
-Future<int> getLatestComicNumber() async => json.decode(
+Future<int> getLatestComicNumber() async {
+  final dir = await getTemporaryDirectory();
+  var file = File("${dir.path}/latestComicNumber.txt");
+  int n = 1;
+
+  try {
+    n = json.decode(
       await http.read(
         Uri.parse("https://xkcd.com/info.0.json"),
       ),
     )["num"];
+    file.exists().then((exists) {
+      if (!exists) {
+        file.createSync();
+      }
+      file.writeAsString("$n");
+    });
+  } catch (e) {
+    if (file.existsSync() && file.readAsStringSync() != "") {
+      n = int.parse(file.readAsStringSync());
+    }
+  }
+
+  return n;
+}
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(
     MaterialApp(
       home: HomeScreen(
@@ -36,7 +57,6 @@ class HomeScreen extends StatelessWidget {
     var comicFile = File("${dir.path}/$comicNumber.json");
 
     if (await comicFile.exists() && comicFile.readAsStringSync() != "") {
-      print("Loading $n from cache");
       return json.decode(comicFile.readAsStringSync());
     } else {
       final comic = await http.read(
@@ -44,7 +64,6 @@ class HomeScreen extends StatelessWidget {
           "https://xkcd.com/${latestComic - n}/info.0.json",
         ),
       );
-      print("Saving $n to cache");
       comicFile.writeAsStringSync(comic);
       return json.decode(comic);
     }
