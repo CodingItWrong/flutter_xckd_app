@@ -1,6 +1,7 @@
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'dart:convert';
 import 'dart:io';
 
@@ -131,6 +132,10 @@ class ComicPage extends StatelessWidget {
   const ComicPage({super.key, required this.comic});
   final Map<String, dynamic> comic;
 
+  void _launchComic(int comicNumber) {
+    launchUrl(Uri.parse("https://xkcd.com/$comicNumber/"));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -142,7 +147,12 @@ class ComicPage extends StatelessWidget {
             style: Theme.of(context).textTheme.displayLarge,
           ),
         ),
-        Image.network(comic["img"]),
+        InkWell(
+          onTap: () {
+            _launchComic(comic["num"]);
+          },
+          child: Image.network(comic["img"]),
+        ),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Text(comic["alt"]),
