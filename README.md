@@ -1,16 +1,31 @@
 # xckd_app
 
-A new Flutter project.
+The "XKCD" app exercise from the book [*Programming Flutter*](https://pragprog.com/titles/czflutr/programming-flutter/) (with a fun typo in the app name!)
 
-## Getting Started
+## Requirements
 
-This project is a starting point for a Flutter application.
+Recommended Flutter development environment:
 
-A few resources to get you started if this is your first Flutter project:
+- VS Code
+- [Flutter extension](https://marketplace.visualstudio.com/items?itemName=Dart-Code.flutter) for VS Code
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## Running
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Run `main.dart` from within VS Code.
+
+## Testing
+
+### Unit Tests
+
+- Run `flutter test`
+- Or, from within `test/unit_test.dart`, run an individual test in VS Code
+
+### Integration Tests
+
+Note that integration tests make real network requests instead of mocking.
+
+Run `flutter drive --target=test_driver/selectionpage.dart`
+
+## License
+
+MIT
