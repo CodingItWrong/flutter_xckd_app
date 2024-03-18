@@ -79,9 +79,9 @@ class HomeScreen extends StatelessWidget {
     if (await comicFile.exists() && comicFile.readAsStringSync() != "") {
       return json.decode(comicFile.readAsStringSync());
     } else {
-      final comic = json.decode(await http.read(
+      final comic = await http.read(
         Uri.parse("https://xkcd.com/${latestComic - n}/info.0.json"),
-      ));
+      );
       comicFile.writeAsStringSync(comic);
       return json.decode(comic);
     }
