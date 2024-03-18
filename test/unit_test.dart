@@ -5,9 +5,6 @@ import 'package:mockito/mockito.dart';
 import 'package:xckd_app/main.dart';
 import 'dart:io';
 
-// not null safe
-// class MockHTTPClient extends Mock implements http.Client {}
-
 @GenerateNiceMocks([MockSpec<http.Client>(), MockSpec<File>()])
 import 'unit_test.mocks.dart';
 
