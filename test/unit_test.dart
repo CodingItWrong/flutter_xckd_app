@@ -44,41 +44,11 @@ const comics = [
 void main() {
   test("get latest comic number", () async {
     var latestComicNumberFile = MockFile();
-    var latestComicNumberExists = false;
-    String latestComicNumberString = "NOT SET YET";
     var mockHttp = MockClient();
 
     when(mockHttp.read(Uri.parse('https://xkcd.com/info.0.json')))
         .thenAnswer((_) {
       return Future.value(comics[1]);
-    });
-    when(latestComicNumberFile.createSync()).thenAnswer((_) {
-      latestComicNumberExists = true;
-    });
-    when(latestComicNumberFile.create()).thenAnswer((_) {
-      latestComicNumberExists = true;
-      return Future.value(latestComicNumberFile);
-    });
-    when(latestComicNumberFile.writeAsStringSync("2")).thenAnswer((_) {
-      latestComicNumberExists = true;
-      latestComicNumberString = "2";
-    });
-    when(latestComicNumberFile.writeAsString("2")).thenAnswer((_) {
-      latestComicNumberExists = true;
-      latestComicNumberString = "2";
-      return Future.value(latestComicNumberFile);
-    });
-    when(latestComicNumberFile.existsSync())
-        .thenReturn(latestComicNumberExists);
-    when(latestComicNumberFile.exists())
-        .thenAnswer((_) => Future.value(latestComicNumberExists));
-    when(latestComicNumberFile.readAsStringSync()).thenAnswer((_) {
-      assert(latestComicNumberExists, true);
-      return "2";
-    });
-    when(latestComicNumberFile.readAsString()).thenAnswer((_) {
-      assert(latestComicNumberExists, true);
-      return Future.value(latestComicNumberString);
     });
 
     expect(
