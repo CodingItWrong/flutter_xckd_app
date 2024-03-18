@@ -5,26 +5,35 @@ import 'package:url_launcher/url_launcher.dart';
 import 'dart:convert';
 import 'dart:io';
 
-Future<int> getLatestComicNumber() async {
-  final dir = await getTemporaryDirectory();
-  var file = File("${dir.path}/latestComicNumber.txt");
+Future<int> getLatestComicNumber({
+  http.Client? httpClient,
+  File? latestComicNFile,
+}) async {
+  httpClient ??= http.Client();
+
+  if (latestComicNFile == null) {
+    final dir = await getTemporaryDirectory();
+    latestComicNFile = File('${dir.path}/latestComicNumber.txt');
+  }
+
   int n = 1;
 
   try {
     n = json.decode(
-      await http.read(
+      await httpClient.read(
         Uri.parse("https://xkcd.com/info.0.json"),
       ),
     )["num"];
-    file.exists().then((exists) {
+    latestComicNFile.exists().then((exists) {
       if (!exists) {
-        file.createSync();
+        latestComicNFile?.createSync();
       }
-      file.writeAsString("$n");
+      latestComicNFile?.writeAsString("$n");
     });
   } catch (e) {
-    if (file.existsSync() && file.readAsStringSync() != "") {
-      n = int.parse(file.readAsStringSync());
+    if (latestComicNFile.existsSync() &&
+        latestComicNFile.readAsStringSync() != "") {
+      n = int.parse(latestComicNFile.readAsStringSync());
     }
   }
 
@@ -52,19 +61,27 @@ class HomeScreen extends StatelessWidget {
   final int latestComic;
   final String title;
 
-  Future<Map<String, dynamic>> _fetchComic(int n) async {
-    final dir = await getTemporaryDirectory();
+  Future<Map<String, dynamic>> _fetchComic(
+    int n, {
+    http.Client? httpClient,
+    File? comicFile,
+  }) async {
     int comicNumber = latestComic - n;
-    var comicFile = File("${dir.path}/$comicNumber.json");
+    Directory? dir;
+
+    httpClient ??= http.Client();
+
+    if (comicFile == null) {
+      dir = await getTemporaryDirectory();
+      comicFile = File("${dir.path}/$comicNumber.json");
+    }
 
     if (await comicFile.exists() && comicFile.readAsStringSync() != "") {
       return json.decode(comicFile.readAsStringSync());
     } else {
-      final comic = await http.read(
-        Uri.parse(
-          "https://xkcd.com/${latestComic - n}/info.0.json",
-        ),
-      );
+      final comic = json.decode(await http.read(
+        Uri.parse("https://xkcd.com/${latestComic - n}/info.0.json"),
+      ));
       comicFile.writeAsStringSync(comic);
       return json.decode(comic);
     }
@@ -177,16 +194,26 @@ class ComicPage extends StatelessWidget {
 class SelectionPage extends StatelessWidget {
   const SelectionPage({super.key});
 
-  Future<Map<String, dynamic>> _fetchComic(String n) async {
-    final dir = await getTemporaryDirectory();
-    var comicFile = File("${dir.path}.$n.json}");
+  Future<Map<String, dynamic>> _fetchComic(
+    String n, {
+    http.Client? httpClient,
+    File? comicFile,
+  }) async {
+    Directory? dir;
+    httpClient ??= http.Client();
+
+    if (comicFile == null) {
+      dir = await getTemporaryDirectory();
+      comicFile = File("${dir.path}/$n.json");
+    }
 
     if (await comicFile.exists() && comicFile.readAsStringSync() != "") {
       return json.decode(comicFile.readAsStringSync());
     } else {
-      final comic =
-          await http.read(Uri.parse("https://xkcd.com/$n/info.0.json"));
-      print(comic);
+      final comic = await httpClient.read(
+        Uri.parse("https://xkcd.com/$n/info.0.json"),
+      );
+
       comicFile.writeAsString(comic);
       return json.decode(comic);
     }
