@@ -61,7 +61,7 @@ class HomeScreen extends StatelessWidget {
   final int latestComic;
   final String title;
 
-  Future<Map<String, dynamic>> _fetchComic(
+  Future<Map<String, dynamic>> fetchComic(
     int n, {
     http.Client? httpClient,
     File? comicFile,
@@ -108,7 +108,7 @@ class HomeScreen extends StatelessWidget {
       body: ListView.builder(
         itemCount: latestComic,
         itemBuilder: (context, i) => FutureBuilder(
-          future: _fetchComic(i),
+          future: fetchComic(i),
           builder: (context, comicResult) => comicResult.hasData
               ? ComicTile(comic: comicResult.data)
               : const Center(
@@ -201,7 +201,7 @@ class SelectionPage extends StatelessWidget {
 
   final TextEditingController _controller = TextEditingController();
 
-  Future<Map<String, dynamic>> _fetchComic(
+  Future<Map<String, dynamic>> fetchComic(
     String n, {
     http.Client? httpClient,
     File? comicFile,
@@ -250,7 +250,7 @@ class SelectionPage extends StatelessWidget {
               context,
               MaterialPageRoute(
                 builder: (context) => FutureBuilder(
-                  future: _fetchComic(a),
+                  future: fetchComic(a),
                   builder: (context, snapshot) {
                     if (snapshot.hasError) {
                       return const ErrorPage();
@@ -271,7 +271,7 @@ class SelectionPage extends StatelessWidget {
               context,
               MaterialPageRoute(
                 builder: (context) => FutureBuilder(
-                  future: _fetchComic(_controller.text),
+                  future: fetchComic(_controller.text),
                   builder: (context, snapshot) {
                     if (snapshot.hasError) {
                       return const ErrorPage();
