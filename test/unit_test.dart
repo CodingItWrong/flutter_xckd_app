@@ -63,23 +63,44 @@ void main() {
     );
   });
 
-  test("SelectionPage fetchComic latest", () async {
-    var mockHttp = MockClient();
-    var latestComicFile = MockFile();
+  group("SelectionPage fetchComic", () {
+    test("when not cached", () async {
+      var mockHttp = MockClient();
+      var latestComicFile = MockFile();
 
-    when(mockHttp.read(Uri.parse("https://xkcd.com/2/info.0.json")))
-        .thenAnswer((_) => Future.value(comics[1]));
-    when(latestComicFile.exists()).thenAnswer((_) => Future.value(false));
+      when(latestComicFile.exists()).thenAnswer((_) => Future.value(false));
+      when(mockHttp.read(Uri.parse("https://xkcd.com/2/info.0.json")))
+          .thenAnswer((_) => Future.value(comics[1]));
 
-    var selPage = SelectionPage();
+      var selPage = SelectionPage();
 
-    expect(
-      await selPage.fetchComic(
-        "2",
-        httpClient: mockHttp,
-        comicFile: latestComicFile,
-      ),
-      json.decode(comics[1]),
-    );
+      expect(
+        await selPage.fetchComic(
+          "2",
+          httpClient: mockHttp,
+          comicFile: latestComicFile,
+        ),
+        json.decode(comics[1]),
+      );
+    });
+
+    test("when cached", () async {
+      var mockHttp = MockClient();
+      var latestComicFile = MockFile();
+
+      when(latestComicFile.exists()).thenAnswer((_) => Future.value(true));
+      when(latestComicFile.readAsStringSync()).thenAnswer((_) => comics[1]);
+
+      var selPage = SelectionPage();
+
+      expect(
+        await selPage.fetchComic(
+          "2",
+          httpClient: mockHttp,
+          comicFile: latestComicFile,
+        ),
+        json.decode(comics[1]),
+      );
+    });
   });
 }
