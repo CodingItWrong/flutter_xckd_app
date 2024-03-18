@@ -223,7 +223,10 @@ class SelectionPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Comic selection"),
+        title: const Text(
+          "Comic selection",
+          key: Key("AppBar text"),
+        ),
       ),
       body: Center(
         child: TextField(
