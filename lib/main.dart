@@ -192,7 +192,9 @@ class ComicPage extends StatelessWidget {
 }
 
 class SelectionPage extends StatelessWidget {
-  const SelectionPage({super.key});
+  SelectionPage({super.key});
+
+  final TextEditingController _controller = TextEditingController();
 
   Future<Map<String, dynamic>> _fetchComic(
     String n, {
@@ -228,31 +230,57 @@ class SelectionPage extends StatelessWidget {
           key: Key("AppBar text"),
         ),
       ),
-      body: Center(
-        child: TextField(
-          decoration: const InputDecoration(
-            labelText: "Insert comic #",
-          ),
-          keyboardType: TextInputType.number,
-          autofocus: true,
-          onSubmitted: (a) => Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => FutureBuilder(
-                future: _fetchComic(a),
-                builder: (context, snapshot) {
-                  if (snapshot.hasError) {
-                    return const ErrorPage();
-                  } else if (snapshot.hasData && snapshot.data != null) {
-                    return ComicPage(comic: snapshot.data!);
-                  } else {
-                    return const CircularProgressIndicator();
-                  }
-                },
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          TextField(
+            key: const Key("insert comic"),
+            controller: _controller,
+            decoration: const InputDecoration(
+              labelText: "Insert comic #",
+            ),
+            keyboardType: TextInputType.number,
+            autofocus: true,
+            onSubmitted: (a) => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => FutureBuilder(
+                  future: _fetchComic(a),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasError) {
+                      return const ErrorPage();
+                    } else if (snapshot.hasData && snapshot.data != null) {
+                      return ComicPage(comic: snapshot.data!);
+                    } else {
+                      return const CircularProgressIndicator();
+                    }
+                  },
+                ),
               ),
             ),
           ),
-        ),
+          OutlinedButton(
+            key: const Key("submit comic"),
+            child: Text("Open".toUpperCase()),
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => FutureBuilder(
+                  future: _fetchComic(_controller.text),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasError) {
+                      return const ErrorPage();
+                    } else if (snapshot.hasData && snapshot.data != null) {
+                      return ComicPage(comic: snapshot.data!);
+                    } else {
+                      return const CircularProgressIndicator();
+                    }
+                  },
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
