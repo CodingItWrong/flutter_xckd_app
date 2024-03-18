@@ -2,6 +2,11 @@
 
 The "XKCD" app exercise from the book [*Programming Flutter*](https://pragprog.com/titles/czflutr/programming-flutter/) (with a fun typo in the app name!)
 
+There have been several significant updates in the Flutter ecosystem since the book was published:
+
+- Introduction of null safety
+- Update to mocking approach to handle null safety
+
 ## Requirements
 
 Recommended Flutter development environment:
