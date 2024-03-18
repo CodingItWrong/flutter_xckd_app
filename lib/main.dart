@@ -264,7 +264,7 @@ class SelectionPage extends StatelessWidget {
               ),
             ),
           ),
-          OutlinedButton(
+          TextButton(
             key: const Key("submit comic"),
             child: Text("Open".toUpperCase()),
             onPressed: () => Navigator.push(
