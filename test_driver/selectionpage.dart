@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 void main() {
   enableFlutterDriverExtension();
   runApp(
-    const MaterialApp(
+    MaterialApp(
       home: app.SelectionPage(),
     ),
   );

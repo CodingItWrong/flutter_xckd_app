@@ -20,5 +20,13 @@ void main() {
       await driver?.waitFor(appBarText);
       expect(await driver?.getText(appBarText), "Comic selection");
     });
+
+    test("Open Comic", () async {
+      await driver?.tap(find.byValueKey("insert comic"));
+      await driver?.enterText("1");
+      await driver?.tap(find.byValueKey("submit comic"));
+      await driver?.waitFor(find.text("#1"));
+      expect(await driver?.getText(appBarText), "#1");
+    });
   });
 }

@@ -99,7 +99,7 @@ class HomeScreen extends StatelessWidget {
             onPressed: () => Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => const SelectionPage(),
+                builder: (context) => SelectionPage(),
               ),
             ),
           ),
@@ -168,7 +168,12 @@ class ComicPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("#${comic["num"]}")),
+      appBar: AppBar(
+        title: Text(
+          "#${comic["num"]}",
+          key: const Key("AppBar text"),
+        ),
+      ),
       body: ListView(children: [
         Center(
           child: Text(
