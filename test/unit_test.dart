@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:mockito/annotations.dart';
@@ -57,6 +60,26 @@ void main() {
         latestComicNFile: latestComicNumberFile,
       ),
       2,
+    );
+  });
+
+  test("SelectionPage fetchComic latest", () async {
+    var mockHttp = MockClient();
+    var latestComicFile = MockFile();
+
+    when(mockHttp.read(Uri.parse("https://xkcd.com/2/info.0.json")))
+        .thenAnswer((_) => Future.value(comics[1]));
+    when(latestComicFile.exists()).thenAnswer((_) => Future.value(false));
+
+    var selPage = SelectionPage();
+
+    expect(
+      await selPage.fetchComic(
+        "2",
+        httpClient: mockHttp,
+        comicFile: latestComicFile,
+      ),
+      json.decode(comics[1]),
     );
   });
 }
